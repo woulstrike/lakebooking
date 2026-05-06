@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    environment:
+      - 'POSTGRES_DB=lakebooking'
+      - 'POSTGRES_PASSWORD=127001'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5432'
