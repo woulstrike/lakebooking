@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: userService
+  datasource:
+    url: jdbc:postgresql://localhost:63959/lakebooking
+    username: postgres
+    password: 127001
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgresSQLDialect
