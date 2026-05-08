@@ -1,5 +1,6 @@
 package com.example.userService.infrastructure.mapper;
 
+import com.example.userService.api.dto.UserResponseDTO;
 import com.example.userService.domain.entities.User;
 import com.example.userService.domain.valueObjects.Password;
 import com.example.userService.infrastructure.persistence.models.UserEntity;
@@ -14,6 +15,8 @@ public interface IUserMapper {
 
     @Mapping(target = "password", expression = "java(mapPasswordToString(entity.getPassword()))")
     UserEntity toEntity(User user);
+
+    UserResponseDTO toResponseDTO(User user);
 
     default Password mapPasswordToDomain(String password) {
         return Password.fromHash(password);

@@ -20,6 +20,10 @@ public class Password {
     }
 
     public static Password fromHash(String hashedPassword){
+        if (hashedPassword == null ||hashedPassword.isBlank()) {
+            throw new DomainException("Password can't be empty.");
+        }
+
         return new Password(hashedPassword);
     }
 }

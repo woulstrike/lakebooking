@@ -2,6 +2,7 @@ package com.example.userService.domain.repository;
 
 import com.example.userService.domain.entities.User;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -12,7 +13,13 @@ public interface IUserRepository {
 
     Optional<User> findByEmail(String email);
 
-    void delete(User user);
+    Optional<User> findByUserName(String username);
+
+    void delete(Long id);
 
     boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
+
+    List<User> findAll();
 }

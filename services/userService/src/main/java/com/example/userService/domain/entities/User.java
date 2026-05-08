@@ -67,6 +67,23 @@ public class User {
     }
 
 
+    public void changeUserName(String newUserName){
+        if (this.userName.equals(newUserName)) {
+            throw new DomainException("User name equals your current user name.");
+        }
+
+        if (this.status != UserStatus.ACTIVE && this.status != UserStatus.PENDING) {
+            throw new DomainException("User name can't be changed.");
+        }
+
+        if (newUserName.length() < 4 || newUserName.length() > 30) {
+            throw new DomainException("Username must be between 4 and 30 characters");
+        }
+
+        this.userName = newUserName;
+    }
+
+
     public void changePassword(Password oldPassword, Password newPassword){
         if (this.status != UserStatus.ACTIVE && this.status != UserStatus.PENDING) {
             throw new DomainException("Password can't be changed.");
@@ -104,6 +121,10 @@ public class User {
 
         if (this.status == UserStatus.DELETED) {
             throw new DomainException("Can't ban deleted user.");
+        }
+
+        if (reason == null) {
+            throw new DomainException("Ban reason can't be null.");
         }
 
         this.status = UserStatus.BANNED;
