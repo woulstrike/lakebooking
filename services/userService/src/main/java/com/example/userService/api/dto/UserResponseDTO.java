@@ -2,6 +2,7 @@ package com.example.userService.api.dto;
 
 import com.example.userService.domain.enums.UserRole;
 import com.example.userService.domain.enums.UserStatus;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import lombok.ToString;
 
@@ -17,7 +18,7 @@ public class UserResponseDTO {
     @ToString.Include
     private String email;
 
-    private UserRole roles;
+    private UserRole role;
 
     private UserStatus status;
 

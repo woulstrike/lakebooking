@@ -7,6 +7,7 @@ import com.example.userService.domain.valueObjects.Password;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 public class User {
@@ -35,7 +36,7 @@ public class User {
         this.userName = userName;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = UserRole.USER;
         this.status = UserStatus.PENDING;
         this.createdAt = LocalDateTime.now();
     }
@@ -89,15 +90,20 @@ public class User {
             throw new DomainException("Password can't be changed.");
         }
 
-        if (!this.password.equals(oldPassword)) {
-            throw new DomainException("Current password incorrect.");
-        }
-
-        if (this.password.equals(newPassword)) {
-            throw new DomainException("New password can't be equals to current password.");
-        }
-
         this.password = newPassword;
+    }
+
+
+    public void changeRole(UserRole newRole) {
+        if (newRole == null) {
+            throw new DomainException("Role can't be null.");
+        }
+
+        if (this.role == newRole) {
+            throw new DomainException("Role is already " + newRole);
+        }
+
+        this.role = newRole;
     }
 
 
@@ -114,13 +120,21 @@ public class User {
         this.activatedAt = LocalDateTime.now();
     }
 
-    public void banUser(String reason) {
+    public void banUser(Long id, String reason) {
         if (this.status == UserStatus.BANNED) {
             throw new DomainException("User is already banned.");
         }
 
         if (this.status == UserStatus.DELETED) {
             throw new DomainException("Can't ban deleted user.");
+        }
+
+        if (this.role != UserRole.ADMIN) {
+            throw new DomainException("You can't ban users.");
+        }
+
+        if (this.id.equals(id)) {
+            throw new DomainException("You can't ban yourself.");
         }
 
         if (reason == null) {

@@ -1,6 +1,8 @@
 package com.example.userService.application.interfaces;
 
 import com.example.userService.api.dto.*;
+import com.example.userService.domain.enums.UserRole;
+import com.example.userService.domain.enums.UserStatus;
 
 import java.util.List;
 
@@ -22,4 +24,7 @@ public interface IUserService {
     UserResponseDTO updatePassword(Long id, UserUpdatePasswordDTO userUpdatePasswordDTO);
 
     UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO);
+
+    UserResponseDTO updateRole(Long adminId, Long userId, UserRoleDTO role);
+//    void banUser(Long id, UserBanDTO banDTO);
 }
