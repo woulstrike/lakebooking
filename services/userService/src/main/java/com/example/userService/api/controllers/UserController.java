@@ -79,7 +79,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/users/role/{adminId}/{userId]")
+    @PostMapping("/users/role/{adminId}/{userId}")
     public ResponseEntity<?> updateRole(@PathVariable Long adminId, @PathVariable Long userId, @RequestBody UserRoleDTO userRole) {
         UserResponseDTO user = service.updateRole(adminId, userId, userRole);
 

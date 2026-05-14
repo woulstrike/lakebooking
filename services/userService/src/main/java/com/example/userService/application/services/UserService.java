@@ -92,7 +92,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Error to delete user."));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Error to find user for delete."));
         user.delete();
 
         userRepository.save(user);
