@@ -25,6 +25,6 @@ public interface IUserService {
 
     UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO);
 
-    UserResponseDTO updateRole(Long adminId, Long userId, UserRoleDTO role);
+    UserResponseDTO updateRole(Long userId, UserRoleDTO role);
 //    void banUser(Long id, UserBanDTO banDTO);
 }

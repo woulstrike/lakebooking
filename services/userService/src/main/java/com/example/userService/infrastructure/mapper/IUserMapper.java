@@ -14,6 +14,12 @@ public interface IUserMapper {
 
     UserEntity toEntity(User user);
 
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "userName", source = "userName")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "role", source = "role")
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "createdAt", source = "createdAt")
     UserResponseDTO toResponseDTO(User user);
 
     default String mapPasswordToString(Password password) {

@@ -81,10 +81,9 @@ public class UserService implements IUserService {
     @Transactional
     public void activateUser(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Error to activate user."));
-
         user.activateUser();
-        userRepository.save(user);
 
+        userRepository.save(user);
         log.info("Email successfully activated: {}.", email);
     }
 
@@ -137,8 +136,8 @@ public class UserService implements IUserService {
 
         user.changePassword(currentPassword, newPassword);
 
-        userRepository.save(user);
         log.info("User id {} successfully updated password.", id);
+        userRepository.save(user);
 
         return mapper.toResponseDTO(user);
     }
@@ -173,7 +172,6 @@ public class UserService implements IUserService {
                 break;
             }
         }
-
         userRepository.save(user);
         log.info("User with id {} updated successfully.", id);
 
@@ -181,18 +179,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserResponseDTO updateRole(Long adminId, Long userId, UserRoleDTO role) {
-        User admin = userRepository.findById(adminId).orElseThrow(() -> new UpdateException("Admin not found."));
-
-        if (!admin.getRole().equals(UserRole.ADMIN)) {
-            throw new UpdateException("Only admins can change roles");
-        }
-
+    @Transactional
+    public UserResponseDTO updateRole(Long userId, UserRoleDTO role) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UpdateException("User not found."));
         user.changeRole(role.getRole());
 
         userRepository.save(user);
-
         return mapper.toResponseDTO(user);
     }
 

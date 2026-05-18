@@ -1,11 +1,9 @@
-package com.example.userService.application.services;
+package com.example.gatewayAPI.security;
 
-import com.example.userService.domain.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,4 +35,42 @@ public class JwtService {
                 .compact();
     }
 
+
+    public Boolean validateToken(String token) {
+        try {
+            getAllClaims(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    public String extractRole(String token) {
+        return getAllClaims(token).get("role", String.class);
+    }
+
+
+    public String extractSubject(String token) {
+        return getAllClaims(token).getSubject();
+    }
+
+
+    public Date extractExpiration(String token) {
+        return getAllClaims(token).getExpiration();
+    }
+
+
+    public Boolean isTokenExpired(String token) {
+        return getAllClaims(token).getExpiration().before(new Date());
+    }
+
+
+    private Claims getAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 }

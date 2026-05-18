@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,71 +20,116 @@ import java.util.List;
 public class UserController {
     private final IUserService service;
 
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllUsers() {
+    @GetMapping("/admin/users")
+    public ResponseEntity<?> getAllUsers(@RequestHeader("X-User-Role") String roleHeader) {
+        UserRole role = UserRole.valueOf(roleHeader);
+
+        if (!role.equals(UserRole.ADMIN)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden.");
+        }
+
         List<UserResponseDTO> allUsers = service.findAllUsers();
 
         return ResponseEntity.ok().body(allUsers);
     }
 
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id) {
-        UserResponseDTO user = service.findUserById(id);
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<?> getUser(@PathVariable Long id, @RequestHeader("X-User-Role")  String roleHeader, @RequestHeader("X-User-Email") String emailHeader) {
+        UserRole role = UserRole.valueOf(roleHeader);
 
-        return ResponseEntity.ok().body(user);
+        if (role.equals(UserRole.ADMIN)) {
+            UserResponseDTO user = service.findUserById(id);
+            return ResponseEntity.ok().body(user);
+        }
 
+        UserResponseDTO currentUser = service.findUserByEmail(emailHeader);
+        if (!currentUser.getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden.");
+        }
+
+        return ResponseEntity.ok().body(currentUser);
     }
 
 
-    @GetMapping("/users/email/{email}")
-    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
-        UserResponseDTO user = service.findUserByEmail(email);
+    @GetMapping("/profile/email/")
+    public ResponseEntity<?> getUserByEmail(@RequestParam(required = false) String email,  @RequestHeader("X-User-Role") String roleHeader,  @RequestHeader("X-User-Email") String emailHeader) {
+        UserRole role = UserRole.valueOf(roleHeader);
+        if (role.equals(UserRole.ADMIN)) {
+            UserResponseDTO user = service.findUserByEmail(email);
+            return ResponseEntity.ok().body(user);
+        }
 
+        UserResponseDTO user = service.findUserByEmail(emailHeader);
         return ResponseEntity.ok().body(user);
-
     }
 
 
-    @PostMapping("/users/activate/{email}")
-    public ResponseEntity<?> activateUser(@PathVariable String email) {
+    @PostMapping("/profile/activate/{email}")
+    public ResponseEntity<?> activateUser(@PathVariable String email, @RequestHeader("X-User-Role")  String roleHeader, @RequestHeader("X-User-Email") String emailHeader) {
+        UserRole role = UserRole.valueOf(roleHeader);
+        if (role.equals(UserRole.ADMIN)) {
+            service.activateUser(email);
+            return ResponseEntity.ok().body("Activated");
+        }
+
+        if (!email.equals(emailHeader)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden.");
+        }
         service.activateUser(email);
-
         return ResponseEntity.ok().body("Activated");
-
     }
 
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/profile/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @RequestHeader("X-User-Role")  String roleHeader, @RequestHeader("X-User-Email") String emailHeader) {
+        UserRole role = UserRole.valueOf(roleHeader);
+        if (role.equals(UserRole.ADMIN)) {
+            service.deleteUser(id);
+            return ResponseEntity.ok().body("Deleted");
+        }
+        UserResponseDTO user = service.findUserByEmail(emailHeader);
+
+        if (!user.getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden.");
+        }
+
         service.deleteUser(id);
-
         return ResponseEntity.ok().body("Deleted");
-
     }
 
 
-    @PatchMapping("/users/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserUpdateDTO updateDTO) {
-        UserResponseDTO user = service.updateUser(id, updateDTO);
+    @PatchMapping("/profile")
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO updateDTO, @RequestHeader("X-User-Email") String emailHeader) {
+        UserResponseDTO currentUser = service.findUserByEmail(emailHeader);
 
-        return ResponseEntity.ok().body(user);
+        UserResponseDTO updatedUser = service.updateUser(currentUser.getId(), updateDTO);
+
+        return ResponseEntity.ok().body(updatedUser);
     }
 
 
-    @PatchMapping("/users/password/{id}")
-    public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestBody UserUpdatePasswordDTO passwordDTO) {
-        UserResponseDTO user = service.updatePassword(id, passwordDTO);
+    @PatchMapping("/profile/password/{id}")
+    public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestBody UserUpdatePasswordDTO passwordDTO, @RequestHeader("X-User-Email")  String emailHeader) {
+        UserResponseDTO currentUser = service.findUserByEmail(emailHeader);
 
-        return ResponseEntity.ok().body(user);
+        if (!currentUser.getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden.");
+        }
+
+        UserResponseDTO updatedUser = service.updatePassword(currentUser.getId(), passwordDTO);
+        return ResponseEntity.ok().body(updatedUser);
     }
 
 
-    @PostMapping("/users/role/{adminId}/{userId}")
-    public ResponseEntity<?> updateRole(@PathVariable Long adminId, @PathVariable Long userId, @RequestBody UserRoleDTO userRole) {
-        UserResponseDTO user = service.updateRole(adminId, userId, userRole);
-
-        return  ResponseEntity.ok().body(user);
+    @PostMapping("/profile/role/{userId}")
+    public ResponseEntity<?> updateRole(@PathVariable Long userId, @RequestBody UserRoleDTO userRole, @RequestHeader("X-User-Role")  String roleHeader, @RequestHeader("X-User-Email") String emailHeader) {
+        UserRole role = UserRole.valueOf(roleHeader);
+//        if (role.equals(UserRole.ADMIN)) {
+            UserResponseDTO user = service.updateRole(userId, userRole);
+            return  ResponseEntity.ok().body(user);
+//        }
+//        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden.");
     }
 
 //    @PostMapping("/users/ban/{id}")
