@@ -1,4 +1,4 @@
-package com.example.userService.api.exceptions;
+package com.example.userService.api.exception;
 
 import com.example.userService.api.dto.ErrorResponse;
 import com.example.userService.application.exceptions.LoginException;

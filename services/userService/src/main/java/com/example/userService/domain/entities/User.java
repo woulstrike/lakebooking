@@ -33,6 +33,18 @@ public class User {
 
     //constructor for creating user
     public User(String userName, String email, Password password, UserRole role) {
+        if (userName == null) {
+            throw new DomainException("Username is required.");
+        }
+
+        if (email == null) {
+            throw new DomainException("Email is required.");
+        }
+
+        if (password == null) {
+            throw new DomainException("Password is required.");
+        }
+
         this.userName = userName;
         this.email = email;
         this.password = password;
@@ -156,6 +168,18 @@ public class User {
         }
 
         return this.role != UserRole.MODERATOR;
+    }
+
+    public void changeStatus(UserStatus newStatus) {
+        if (!status.canChangeStatus(newStatus)) {
+            throw new DomainException("Status can't be changed.");
+        }
+
+        this.status = newStatus;
+    }
+
+    public boolean canCreateListing() {
+        return this.role == UserRole.HOST;
     }
 
     public void delete() {
