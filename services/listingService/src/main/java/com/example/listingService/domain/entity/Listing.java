@@ -10,9 +10,9 @@ import java.util.List;
 
 @Getter
 public class Listing {
-    private Long id;
+    private final Long id;
 
-    private Long ownerId;
+    private final Long ownerId;
 
     private String title;
 
@@ -30,7 +30,7 @@ public class Listing {
 
     private LocalDateTime bannedAt;
 
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
 
     private LocalDateTime deletedAt;
 
@@ -73,6 +73,22 @@ public class Listing {
         this.createdAt = LocalDateTime.now();
     }
 
+    //constructor for mapper
+    public Listing(Long id, Long ownerId, String title, String description, Long price, List<String> photos, Location location, Status status,  String banReason, LocalDateTime bannedAt, LocalDateTime createdAt, LocalDateTime deletedAt,  LocalDateTime updatedAt) {
+        this.id = id;
+        this.ownerId = ownerId;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.photos = photos;
+        this.location = location;
+        this.status = status;
+        this.banReason = banReason;
+        this.bannedAt = bannedAt;
+        this.createdAt = createdAt;
+        this.deletedAt = deletedAt;
+        this.updatedAt = updatedAt;
+    }
 
     public void changeTitle(String title) {
         if (title == null || title.isBlank()) {

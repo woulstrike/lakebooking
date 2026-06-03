@@ -34,9 +34,9 @@
 
     <modules>
         <module>services/userService</module>
+        <module>services/listingService</module>
         <module>eurekaServer</module>
         <module>gateway-api</module>
-        <module>services/listingService</module>
     </modules>
 
     <dependencyManagement>

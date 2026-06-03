@@ -27,7 +27,7 @@ public class User {
 
     private LocalDateTime banDate;
 
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
 
     private LocalDateTime activatedAt;
 

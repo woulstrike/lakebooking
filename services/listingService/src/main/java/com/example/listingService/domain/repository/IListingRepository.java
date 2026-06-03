@@ -14,5 +14,5 @@ public interface IListingRepository {
 
     Optional<Listing> findByTitle(String title);
 
-    void delete(Long id);
+    void softDelete(Long id);
 }

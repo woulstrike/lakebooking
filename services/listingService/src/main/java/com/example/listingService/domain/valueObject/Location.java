@@ -1,15 +1,17 @@
 package com.example.listingService.domain.valueObject;
 
 import com.example.listingService.domain.exception.DomainException;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class Location {
-    private String city;
+    private final String city;
 
-    private String state;
+    private final String state;
 
-    private String address;
+    private final String address;
 
     public Location(String city, String state, String address) {
         if (city == null || city.isBlank()) {
@@ -29,27 +31,27 @@ public class Location {
         this.address = address;
     }
 
-    public void changeCity(String city) {
+    public Location withCity(String city) {
         if (city == null || city.isBlank()) {
             throw new DomainException("City is empty.");
         }
 
-        this.city = city;
+        return new Location(city, this.state, this.address);
     }
 
-    public void changeState(String state) {
+    public Location withState(String state) {
         if (state == null || state.isBlank()) {
             throw new DomainException("State is empty.");
         }
 
-        this.state = state;
+        return new Location(this.city, state, this.address);
     }
 
-    public void changeAddress(String address) {
+    public Location withAddress(String address) {
         if (address == null || address.isBlank()) {
             throw new DomainException("Address is empty.");
         }
 
-        this.address = address;
+        return new Location(this.city, this.state, address);
     }
 }

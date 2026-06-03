@@ -1,4 +1,4 @@
-package com.example.userService.infrastructure.persistence.repositories;
+package com.example.userService.infrastructure.persistence.repository;
 
 import com.example.userService.domain.repository.IUserRepository;
 import com.example.userService.domain.entities.User;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserRepository implements IUserRepository {
+public class  UserRepository implements IUserRepository {
     private final IUserRepositoryJPA jpaRepository;
     private final IUserMapper mapper;
 
